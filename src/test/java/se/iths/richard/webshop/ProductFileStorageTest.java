@@ -168,7 +168,6 @@ class ProductFileStorageTest {
         Product product = new Product("T001", "Keyboard", 599.99, "Mechanical Keyboard");
 
         storage.saveProduct(product);
-        storage.getProducts();
 
         Product result = storage.getProduct("T001");
 
@@ -184,7 +183,6 @@ class ProductFileStorageTest {
         Product product = new Product("T001", "Keyboard", 599.99, "Mechanical Keyboard");
 
         storage.saveProduct(product);
-        storage.getProducts();
 
         Product result = storage.getProduct("T999");
 

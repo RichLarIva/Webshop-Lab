@@ -49,36 +49,43 @@ public class ProductFileStorage implements ProductStorage {
 
     @Override
     public List<Product> getProducts() {
+        populateProductList();
+        return productList;
+    }
+
+    private void populateProductList() {
         productList = new ArrayList<>();
-        if (Files.isReadable(filePath)) {
-            try {
-                List<String> rows = Files.readAllLines(filePath);
-                for (String row : rows) {
-                    Product product;
-                    try {
-                        product = Product.fromFileLine(row);
-                    } catch (NumberFormatException e) {
-                        IO.println(e.getMessage() + ": " + row);
-                        continue;
-                    } catch (IllegalArgumentException e) {
-                        IO.println(e.getMessage());
-                        continue;
-                    }
-                    productList.add(product);
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
+
+        if (!Files.isReadable(filePath)) {
             throw new RuntimeException("CAN'T READ FILE SOMETHING IS SUPER WRONG!");
         }
 
+        try {
+            List<String> rows = Files.readAllLines(filePath);
 
-        return productList;
+            for (String row : rows) {
+                Product product;
+
+                try {
+                    product = Product.fromFileLine(row);
+                } catch (NumberFormatException e) {
+                    IO.println(e.getMessage() + ": " + row);
+                    continue;
+                } catch (IllegalArgumentException e) {
+                    IO.println(e.getMessage());
+                    continue;
+                }
+
+                productList.add(product);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public Product getProduct(String articleNumber) {
+        populateProductList();
         for (Product product : productList) {
             if (product.getArticleNumber().equals(articleNumber))
                 return product;
