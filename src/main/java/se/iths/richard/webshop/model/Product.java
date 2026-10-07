@@ -13,6 +13,24 @@ public class Product {
         this.description = description;
     }
 
+    public static Product fromFileLine(String line) {
+        String[] fields = line.split(";");
+        if (fields.length != 4) {
+            throw new IllegalArgumentException("ERROR: INVALID PRODUCT LINE: " + line);
+        }
+
+        String articleNumber = fields[0];
+        String title = fields[1];
+        try {
+            double price = Double.parseDouble(fields[2]);
+            String description = fields[3];
+
+            return new Product(articleNumber, title, price, description);
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("ERROR: COULDN'T PARSE PRICE ENDING PROGRAM");
+        }
+    }
+
     public String getArticleNumber() {
         return articleNumber;
     }
@@ -47,23 +65,5 @@ public class Product {
 
     public String toFileLine() {
         return articleNumber + ";" + title + ";" + price + ";" + description + System.lineSeparator();
-    }
-
-    public static Product fromFileLine(String line)
-    {
-        String[] splittedLine = line.split(";");
-        String articleNumber = splittedLine[0];
-        String title = splittedLine[1];
-        try
-        {
-            double price = Double.parseDouble(splittedLine[2]);
-            String description = splittedLine[3];
-
-            return new Product(articleNumber, title, price, description);
-        }
-        catch (NumberFormatException e)
-        {
-            throw new NumberFormatException("ERROR: COULDN'T PARSE PRICE ENDING PROGRAM");
-        }
     }
 }
