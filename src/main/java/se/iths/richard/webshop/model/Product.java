@@ -1,5 +1,7 @@
 package se.iths.richard.webshop.model;
 
+import se.iths.richard.webshop.exceptions.IllegalPriceException;
+
 public class Product {
     private String articleNumber;
     private String title;
@@ -7,6 +9,13 @@ public class Product {
     private String description;
 
     public Product(String articleNumber, String title, double price, String description) {
+        if (articleNumber == null || articleNumber.isBlank() ||
+                title == null || title.isBlank() ||
+                description == null || description.isBlank()) {
+            throw new IllegalArgumentException("Can't have blanks");
+        }
+        if (price < 0)
+            throw new IllegalPriceException("Price can't be below 0");
         this.articleNumber = articleNumber;
         this.title = title;
         this.price = price;

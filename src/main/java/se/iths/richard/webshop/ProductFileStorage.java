@@ -32,7 +32,7 @@ public class ProductFileStorage implements ProductStorage {
                 throw new RuntimeException(e);
             }
         }
-        IO.println("FILE ALREADY EXISTS");
+        // PRODUCTS.SCSV ALREADY EXISTS!
         productList = new ArrayList<>();
     }
 
