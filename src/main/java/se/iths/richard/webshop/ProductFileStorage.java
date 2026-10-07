@@ -5,6 +5,7 @@ import se.iths.richard.webshop.model.Product;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ public class ProductFileStorage implements ProductStorage {
     private final static Path DEFAULT_FILEPATH = Path.of("src/main/resources/products.scsv");
 
     private final Path filePath;
+    List<Product> productList;
 
     public ProductFileStorage() {
         this(DEFAULT_FILEPATH);
@@ -31,19 +33,23 @@ public class ProductFileStorage implements ProductStorage {
             }
         }
         IO.println("FILE ALREADY EXISTS");
+        productList = new ArrayList<>();
     }
 
     @Override
     public void saveProduct(Product product) {
         String productString = product.toFileLine();
 
-
+        try {
+            Files.writeString(filePath, productString, StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public List<Product> getProducts() {
-        List<Product> productList = new ArrayList<>();
-
+        productList = new ArrayList<>();
         if (Files.isReadable(filePath)) {
             try {
                 List<String> rows = Files.readAllLines(filePath);
@@ -73,6 +79,11 @@ public class ProductFileStorage implements ProductStorage {
 
     @Override
     public Product getProduct(String articleNumber) {
+        for (Product product : productList) {
+            if (product.getArticleNumber().equals(articleNumber))
+                return product;
+        }
+
         return null;
     }
 }
