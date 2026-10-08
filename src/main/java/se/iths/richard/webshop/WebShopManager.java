@@ -11,6 +11,7 @@ public class WebShopManager {
 
     private final ProductStorage productStorage;
     private final OutInputHandler outInputHandler;
+    private Discount discount = null;
 
     public WebShopManager(ProductStorage productStorage, OutInputHandler outInputHandler) {
         this.productStorage = productStorage;
@@ -31,9 +32,10 @@ public class WebShopManager {
 
 
     public void startWebshop() {
-        outInputHandler.info("TEST");
+
         String discountCode = "";
-        Discount discount = null;
+
+        discountCode = outInputHandler.prompt("Choose Discount: ");
 
         switch (discountCode) {
             case "halfprice":
@@ -59,6 +61,8 @@ public class WebShopManager {
                 case "3":
                     getSpecificProduct();
                     break;
+                default:
+                    outInputHandler.info("Incorrect Choice!!");
             }
         }
     }
@@ -75,20 +79,28 @@ public class WebShopManager {
 
     private void listAllProducts() {
         List<Product> productList = getProductsFromStorage();
-
+        StringBuilder output = new StringBuilder();
         for (Product product : productList) {
-            outInputHandler.info(product.toString());
+            output.append(product.toString());
+            output.append("Discounted Price: ").append(discount.calculatePrice(product.getPrice()));
+            output.append("\n\r");
         }
+
+        outInputHandler.info(output.toString());
     }
 
     private void getSpecificProduct() {
         String articleNumber = readString("What product do you want: ");
         Product product = getProductFromStorage(articleNumber);
+        StringBuilder output = new StringBuilder();
         if (product == null) {
             outInputHandler.info("No product found");
+
             return;
         }
-        outInputHandler.info(product.toString());
+        output.append(product.toString());
+        output.append("Discounted Price: ").append(discount.calculatePrice(product.getPrice()));
+        outInputHandler.info(output.toString());
     }
 
     private void createProduct() {
