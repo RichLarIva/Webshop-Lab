@@ -1,13 +1,12 @@
 package se.iths.richard;
 
-import se.iths.richard.webshop.ProductFileStorage;
-import se.iths.richard.webshop.ProductStorage;
-import se.iths.richard.webshop.WebShopManager;
+import se.iths.richard.webshop.*;
 
 public class Main {
     static void main() {
         ProductStorage productStorage = new ProductFileStorage();
-        WebShopManager webShopManager = new WebShopManager(productStorage);
+        OutInputHandler inputHandler = new JOptionPaneOutInputHandler();
+        WebShopManager webShopManager = new WebShopManager(productStorage, inputHandler);
 
         webShopManager.startWebshop();
     }

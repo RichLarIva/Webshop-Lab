@@ -1,5 +1,6 @@
 package se.iths.richard.webshop;
 
+import se.iths.richard.webshop.exceptions.IllegalEmptyProductException;
 import se.iths.richard.webshop.model.Product;
 
 import java.io.IOException;
@@ -84,7 +85,11 @@ public class ProductFileStorage implements ProductStorage {
     }
 
     @Override
+
     public Product getProduct(String articleNumber) {
+        if (articleNumber == null || articleNumber.isBlank()) {
+            throw new IllegalEmptyProductException("Article Number cant be empty");
+        }
         populateProductList();
         for (Product product : productList) {
             if (product.getArticleNumber().equals(articleNumber))

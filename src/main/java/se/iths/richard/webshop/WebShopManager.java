@@ -8,31 +8,30 @@ import se.iths.richard.webshop.model.TenPercentDiscount;
 import java.util.List;
 
 public class WebShopManager {
-    private static final String MENU = """
-            1. Add Product
-            2. List all Products
-            3. Show info about one Product
-            4/q. Quit Application
-            Choice: """;
-    private final ProductStorage productStorage;
 
-    public WebShopManager(ProductStorage productStorage) {
+    private final ProductStorage productStorage;
+    private final OutInputHandler outInputHandler;
+
+    public WebShopManager(ProductStorage productStorage, OutInputHandler outInputHandler) {
         this.productStorage = productStorage;
+        this.outInputHandler = outInputHandler;
     }
 
-    public void saveProductToStorage(Product product) {
+    void saveProductToStorage(Product product) {
         productStorage.saveProduct(product);
     }
 
-    public List<Product> getProductsFromStorage() {
+    List<Product> getProductsFromStorage() {
         return productStorage.getProducts();
     }
 
-    public Product getProductFromStorage(String articleNumber) {
+    Product getProductFromStorage(String articleNumber) {
         return productStorage.getProduct(articleNumber);
     }
 
+
     public void startWebshop() {
+        outInputHandler.info("TEST");
         String discountCode = "";
         Discount discount = null;
 
@@ -45,48 +44,75 @@ public class WebShopManager {
         }
         boolean isFinished = false;
         while (!isFinished) {
-            String input = IO.readln(MENU);
-
+            String input = outInputHandler.prompt(outInputHandler.menu());
             switch (input.toLowerCase().trim()) {
                 case "q":
                 case "4":
                     isFinished = true;
                     break;
                 case "1":
-                    String articleNumber = readString("Input products Article Number: ");
-                    String title = readString("Input products Title: ");
-                    double price = readDouble("Input products Price: ");
-                    String description = readString("Input products Description: ");
-
-                    Product product = new Product(articleNumber, title, price, description);
-                    saveProductToStorage(product);
+                    createProduct();
+                    break;
+                case "2":
+                    listAllProducts();
+                    break;
+                case "3":
+                    getSpecificProduct();
+                    break;
             }
         }
     }
 
     private String readString(String prompt) {
         while (true) {
-            String input = IO.readln(prompt);
-
+            String input = outInputHandler.prompt(prompt);
             if (input != null && !input.isBlank()) {
                 return input;
             } else
-                IO.println("Try again!");
+                outInputHandler.info("Try again!");
         }
+    }
+
+    private void listAllProducts() {
+        List<Product> productList = getProductsFromStorage();
+
+        for (Product product : productList) {
+            outInputHandler.info(product.toString());
+        }
+    }
+
+    private void getSpecificProduct() {
+        String articleNumber = readString("What product do you want: ");
+        Product product = getProductFromStorage(articleNumber);
+        if (product == null) {
+            outInputHandler.info("No product found");
+            return;
+        }
+        outInputHandler.info(product.toString());
+    }
+
+    private void createProduct() {
+        String articleNumber = readString("Input products Article Number: ");
+
+        String title = readString("Input products Title: ");
+        double price = readDouble("Input products Price: ");
+        String description = readString("Input products Description: ");
+
+        Product product = new Product(articleNumber, title, price, description);
+        saveProductToStorage(product);
     }
 
     private double readDouble(String prompt) {
         while (true) {
-            String input = IO.readln(prompt);
-
+            String input = outInputHandler.prompt(prompt);
             if (input != null && !input.isBlank()) {
                 try {
                     return Double.parseDouble(input.replace(',', '.'));
                 } catch (NumberFormatException e) {
-                    IO.println("Please enter a valid number!");
+                    outInputHandler.info("Please enter a valid number!");
                 }
             } else
-                IO.println("Try again!");
+                outInputHandler.info("Try again!");
         }
     }
 }

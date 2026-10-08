@@ -75,4 +75,9 @@ public class Product {
     public String toFileLine() {
         return articleNumber + ";" + title + ";" + price + ";" + description + System.lineSeparator();
     }
+
+    @Override
+    public String toString() {
+        return "Article Number: " + articleNumber + "\n Product Title: " + title + "\n Product Price: " + price + "\n Product Description: " + description + System.lineSeparator();
+    }
 }
